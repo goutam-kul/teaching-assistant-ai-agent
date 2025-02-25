@@ -74,7 +74,10 @@ class DocumentProcessor:
                     logger.warning(f"Could not delete collection: {collection_name}, moving forward ...")
 
             # Get or create a collection
-            collection = self.db_client.get_or_create_collection(name=collection_name)
+            collection = self.db_client.create_collection(
+                name=collection_name,
+                embedding_function=self.embeddings
+            )
 
             # Parser pdf 
             raw_documents = self.pdf_parser.extract_clean_text(
@@ -140,7 +143,7 @@ class DocumentProcessor:
         self, query: str, collection_name: str, n_results: int = 5
     ) -> List[Dict]:
         try:
-            logger.info(f"Getting chunks for {query}")
+            # logger.info(f"Getting chunks for {query}")
             collection = self.db_client.get_or_create_collection(collection_name)
 
             # Query for chunks

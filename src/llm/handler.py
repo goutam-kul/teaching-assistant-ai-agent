@@ -1,7 +1,7 @@
 from typing import List, Dict, Optional
 import json
 from ollama import Client
-from src.llm.prompts import GENERATE_EXPLANATION_PROMPT
+from src.llm.prompts import STRICT_EXPLANATION_PROMPT
 from src.utils.logger import get_logger
 from src.config.settings import get_settings
 from src.utils.exceptions import ContextError, LLMError
@@ -33,10 +33,14 @@ class LLMHandler:
                 model=self.model,
                 prompt=prompt,
                 stream=False,
-                options={"temperature": temperature or self.temperature}
+                options={
+                    "temperature": temperature or self.temperature,
+                    "top_p": 0.1,  # reducing the probability distribution
+                    "top_k": 10   # reduce creativity and hallucination
+                }
             )
 
-            print("LLM Response: ", response['response'])
+            logger.info(f"LLM Response returned with {len(response['response'])} characters")
             return response['response']
         
         except Exception as e:
@@ -58,15 +62,18 @@ class LLMHandler:
         )
         if not context:
             return "I couldn't find any relevant information about this topic in the given knowledge base."
-        
+
+        # Log the context for debugging
+        logger.info(f"explanation context:\n {context}")
+
         # Format the explanation prompt 
-        prompt = GENERATE_EXPLANATION_PROMPT.format(topic=topic, context=context)
-        # logger.info(f"Generated prompt: {prompt}")
+        prompt = STRICT_EXPLANATION_PROMPT.format(topic=topic, context=context)
+        logger.info(f"Generated prompt: {prompt}")
         try: 
             # Make request to LLM   
             return self._make_request(
                 prompt=prompt,
-                temperature=0.5
+                temperature=0.1
             )
         except ContextError as e:
             logger.error(f"Context error: {str(e)}")

@@ -47,19 +47,35 @@ GENERATE_QUESTION_PROMPT = """Generate a multiple choice question about '{topic}
 
 
 GENERATE_EXPLANATION_PROMPT = """You are a teaching assistant tasked with answering questions based ONLY on the provided context.
-Generate a meaningful explanation provided by the given context.
-
-Question: {topic}
+Generate a clear and concise explanation about: {topic}
 
 Relevant Context: {context}
 
 INSTRUCTIONS:
-1. Answer ONLY using information form the context above
-2. Summarize the context to create a meaninful explanation 
-3. If the context doesn't have relevant information, say "I couldn't find any relevant information about this topic in the given knowledge base."
-4. Cite specific parts from the context.
-5. Be concise and accurate
-6. Do not make up or add information not present in the context.
+1. Answer ONLY using information from the context above
+2. Explain the concept in a structured way, highlighting key points
+3. Use simple, clear language that's easy to understand
+4. If the context doesn't have relevant information, say "I couldn't find any relevant information about this topic in the given knowledge base."
+5. Do not make up information not present in the context
+6. Keep your explanation focused and to the point
 
-Your response: 
+Your response:
+"""
+
+# Add a stricter prompt that emphasizes context adherence even more
+STRICT_EXPLANATION_PROMPT = """You are a teaching assistant tasked with answering questions STRICTLY based on the provided context.
+Generate a clear and concise explanation about: {topic}
+
+Relevant Context: {context}
+
+VERY IMPORTANT INSTRUCTIONS:
+1. You MUST ONLY use information explicitly stated in the context above
+2. DO NOT add ANY information, examples, or explanations that are not directly found in the context
+3. If the context is incomplete or lacks detail, acknowledge these limitations rather than filling in gaps
+4. Use EXACT phrases and terminology from the context whenever possible
+5. If the context doesn't have relevant information, say "I couldn't find sufficient information about this topic in the given knowledge base."
+6. If you're unsure about any detail, indicate this uncertainty rather than making an assumption
+7. Keep your response brief and focused on what can be directly supported by the context
+
+Your response (using ONLY information from the context):
 """

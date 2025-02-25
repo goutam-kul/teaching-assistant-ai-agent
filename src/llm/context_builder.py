@@ -25,12 +25,13 @@ class ContextBuilder:
             max_chunks = self.max_chunks
 
         try:
-            # Use either standard or enhanced retriever
+            # Use either standard or enhanced retriever with ranking
             if use_multi_query:
                 chunks = self.retriever.retrieve_with_multi_query(
                     question=query,
                     collection_name=collection_name,
                     chunks_per_query=max_chunks,
+                    max_chunks=max_chunks,
                     deduplicate=True
                 )
             else:
@@ -39,23 +40,28 @@ class ContextBuilder:
                     collection_name=collection_name,
                     n_results=max_chunks
                 )
+                
             if not chunks:
                 logger.warning(f"No chunks found for query: {query}")
                 return ""
             
-            # Build context string
+            # Build context string from ranked chunks
             context_parts = []
-            for i, chunk in enumerate(chunks):
+            # Take only the top few most relevant chunks to avoid diluting the context
+            for i, chunk in enumerate(chunks[:max_chunks]):
                 content = chunk.get("content", "").strip()
                 if content:
-                    # Add source information if available
-                    metadata = chunk.get("metdata", {})
-                    source = metadata.get("sources", "unknown")
+                    # Add source and ranking information if available
+                    metadata = chunk.get("metadata", {})
+                    similarity = metadata.get("similarity_score", 0)
+                    source = metadata.get("source", "unknown")
 
-                    # Format the context with source
-                    context_parts.append(f"# {content}")
+                    # Add a header with ranking information for debugging 
+                    context_parts.append(f"#[{i+1} Relevance: {similarity:.3f}\n{content}]")
         
-            return "\n\n".join(context_parts)
+            final_context = "\n\n".join(context_parts)
+            logger.info(f"Build context with {len(chunks)} chunks, total_lenght: {len(final_context)} characters")
+            return final_context
         
         except Exception as e:
             logger.error(f"Error building context: {str(e)}")
@@ -67,10 +73,15 @@ class ContextBuilder:
     ) -> str:
         """Get context specifically for explanation prompts"""
 
-        return self.build_context(
+        context = self.build_context(
             query=topic,
             collection_name=collection_name,
-            use_multi_query=True,
-            max_chunks=self.max_chunks + 2
+            use_multi_query=use_multi_query,
+            max_chunks=self.max_chunks 
         )
-            
+
+        # Log context information
+        logger.info(f"Explanation context created with {len(context) if context else 0} characters")
+        # print("explanation context:\n", context)  # Debug
+    
+        return context

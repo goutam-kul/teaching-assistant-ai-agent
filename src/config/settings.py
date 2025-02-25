@@ -14,13 +14,13 @@ class Settings(BaseSettings):
     OLLAMA_HOST: str = "http://localhost:11434"
 
     # LLM Configuration
-    LLM_MODEL: str = "qwen2.5:3b"
-    LLM_TEMPERATURE: float = 0.7
+    LLM_MODEL: str = "mistral:7b"
+    LLM_TEMPERATURE: float = 0.1
 
     # Document processing configs
     CHUNK_SIZE: int = 1000
     CHUNK_OVERLAP: int = 200
-    MAX_CONTEXT_CHUNKS: int = 5
+    MAX_CONTEXT_CHUNKS: int = 3
 
     # ChromaDB settings
     CHROMA_SETTINGS: dict = {

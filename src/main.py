@@ -53,7 +53,7 @@ def main():
     
     # Example usage
     file_path = "data/sample.pdf"
-    collection_name = "ncert"
+    collection_name = "test"
     
     # Process document (uncomment if needed)
     # result = process_document(
