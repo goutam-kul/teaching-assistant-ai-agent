@@ -1,4 +1,4 @@
-# Version 2.0 - https://github.com/goutam-kul/teaching_assitant_v2
+Version 2.0 - https://github.com/goutam-kul/teaching_assitant_v2
 
 # Teaching Assistant AI Agent
 
