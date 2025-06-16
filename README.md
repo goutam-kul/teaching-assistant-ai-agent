@@ -1,3 +1,5 @@
+# Version 2.0 - https://github.com/goutam-kul/teaching_assitant_v2
+
 # Teaching Assistant AI Agent
 
 An AI Agent that interacts with a user-provided knowledge base (PDFs, books, etc.) and helps them learn faster and better through personalized teaching and assessment.
